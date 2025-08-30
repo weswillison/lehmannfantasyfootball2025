@@ -27,21 +27,42 @@ class Database {
         
         try {
             // Read and execute schema
-            const schema = fs.readFileSync(path.join(__dirname, '../database/schema.sql'), 'utf8');
+            const schemaPath = path.join(__dirname, '../database/schema.sql');
+            console.log('Looking for schema at:', schemaPath);
+            
+            if (!fs.existsSync(schemaPath)) {
+                console.error('Schema file not found at:', schemaPath);
+                // Try alternative path for Railway deployment
+                const altSchemaPath = path.join(__dirname, './schema.sql');
+                if (fs.existsSync(altSchemaPath)) {
+                    console.log('Using alternative schema path:', altSchemaPath);
+                } else {
+                    throw new Error('Schema file not found');
+                }
+            }
+            
+            const schema = fs.readFileSync(fs.existsSync(schemaPath) ? schemaPath : path.join(__dirname, './schema.sql'), 'utf8');
             await this.exec(schema);
             
             // Check if teams already exist to avoid duplicates
             const existingTeams = await this.all('SELECT COUNT(*) as count FROM teams');
             if (existingTeams[0].count === 0) {
                 // Read and execute seed data only if no teams exist
-                const seed = fs.readFileSync(path.join(__dirname, '../database/seed.sql'), 'utf8');
+                const seedPath = path.join(__dirname, '../database/seed.sql');
+                const altSeedPath = path.join(__dirname, './seed.sql');
+                
+                const seed = fs.readFileSync(fs.existsSync(seedPath) ? seedPath : altSeedPath, 'utf8');
                 await this.exec(seed);
+                console.log('Seed data inserted successfully');
             }
             
             this.initialized = true;
             console.log('Database initialized successfully');
         } catch (error) {
             console.error('Error initializing database:', error);
+            // Log more details for debugging
+            console.error('Current directory:', __dirname);
+            console.error('Available files:', fs.readdirSync(__dirname));
         }
     }
 
