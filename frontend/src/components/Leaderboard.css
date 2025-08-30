@@ -5,6 +5,27 @@
   text-align: center;
 }
 
+.picks-hidden-message {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  border: 2px solid #ff9800;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #e65100;
+}
+
+.picks-hidden-message p {
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+
+.picks-hidden-message small {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  font-weight: normal;
+}
+
 .leaderboard-table {
   background: white;
   border-radius: 8px;

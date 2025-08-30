@@ -1,8 +1,8 @@
 -- Seed data for NFL teams with categories and Vegas win totals
 
 -- Insert 2025 season
-INSERT OR IGNORE INTO seasons (year, current_week, season_started, playoffs_started, super_bowl_complete, picks_locked) 
-VALUES (2025, 1, FALSE, FALSE, FALSE, FALSE);
+INSERT OR IGNORE INTO seasons (year, current_week, season_started, playoffs_started, super_bowl_complete, picks_locked, picks_revealed, first_game_date) 
+VALUES (2025, 1, FALSE, FALSE, FALSE, FALSE, FALSE, '2025-09-05 20:15:00');
 
 -- Insert all 32 NFL teams with categories based on Vegas win totals
 

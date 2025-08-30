@@ -160,10 +160,13 @@ class Database {
     }
 
     async getLeaderboard(seasonId) {
+        const season = await this.get('SELECT picks_revealed FROM seasons WHERE id = ?', [seasonId]);
+        const picksRevealed = season?.picks_revealed || false;
+        
         const sql = `
             SELECT u.name, us.*, 
-                   gt.name as good_team, bt.name as bad_team,
-                   ut1.name as ugly_team_1, ut2.name as ugly_team_2, ut3.name as ugly_team_3
+                   ${picksRevealed ? 'gt.name as good_team, bt.name as bad_team,' : '"Hidden" as good_team, "Hidden" as bad_team,'}
+                   ${picksRevealed ? 'ut1.name as ugly_team_1, ut2.name as ugly_team_2, ut3.name as ugly_team_3' : '"Hidden" as ugly_team_1, "Hidden" as ugly_team_2, "Hidden" as ugly_team_3'}
             FROM user_scores us
             JOIN users u ON us.user_id = u.id
             JOIN user_picks up ON us.user_id = up.user_id AND us.season_id = up.season_id
@@ -176,6 +179,26 @@ class Database {
             ORDER BY us.total_points DESC, u.name ASC
         `;
         return this.all(sql, [seasonId]);
+    }
+
+    async arePicksRevealed(seasonId) {
+        const result = await this.get('SELECT picks_revealed, first_game_date FROM seasons WHERE id = ?', [seasonId]);
+        if (!result) return false;
+        
+        // Check if picks are manually revealed OR if first game has started
+        if (result.picks_revealed) return true;
+        
+        if (result.first_game_date) {
+            const firstGameDate = new Date(result.first_game_date);
+            const now = new Date();
+            return now >= firstGameDate;
+        }
+        
+        return false;
+    }
+
+    async revealPicks(seasonId) {
+        return this.run('UPDATE seasons SET picks_revealed = TRUE WHERE id = ?', [seasonId]);
     }
 }
 

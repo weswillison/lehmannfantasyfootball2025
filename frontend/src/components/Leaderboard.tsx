@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api, LeaderboardEntry, User } from '../api';
+import { api, LeaderboardEntry, User, LeaderboardResponse } from '../api';
 import { getTeamIcon } from '../utils/teamIcons';
 import './Leaderboard.css';
 
@@ -9,14 +9,18 @@ interface Props {
 
 const Leaderboard: React.FC<Props> = ({ currentUser }) => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [picksRevealed, setPicksRevealed] = useState(false);
+  const [message, setMessage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const loadLeaderboard = async () => {
       try {
-        const data = await api.getLeaderboard();
-        setLeaderboard(data);
+        const data: LeaderboardResponse = await api.getLeaderboard();
+        setLeaderboard(data.leaderboard);
+        setPicksRevealed(data.picksRevealed);
+        setMessage(data.message || '');
       } catch (error) {
         setError('Failed to load leaderboard');
       } finally {
@@ -47,6 +51,13 @@ const Leaderboard: React.FC<Props> = ({ currentUser }) => {
   return (
     <div className="leaderboard">
       <h3>🏆 Leaderboard</h3>
+      
+      {!picksRevealed && message && (
+        <div className="picks-hidden-message">
+          <p>🔒 {message}</p>
+          <p><small>Players can see their own picks, but others' picks are hidden until game time!</small></p>
+        </div>
+      )}
       
       <div className="leaderboard-table">
         <div className="table-header">
@@ -83,23 +94,29 @@ const Leaderboard: React.FC<Props> = ({ currentUser }) => {
                 <div className="pick-row">
                   <span className="category">Good:</span>
                   <span className="team">
-                    <span className="team-icon">{getTeamIcon(entry.good_team)}</span>
+                    <span className="team-icon">{entry.good_team === 'Hidden' ? '🔒' : getTeamIcon(entry.good_team)}</span>
                     {entry.good_team}
                   </span>
                 </div>
                 <div className="pick-row">
                   <span className="category">Bad:</span>
                   <span className="team">
-                    <span className="team-icon">{getTeamIcon(entry.bad_team)}</span>
+                    <span className="team-icon">{entry.bad_team === 'Hidden' ? '🔒' : getTeamIcon(entry.bad_team)}</span>
                     {entry.bad_team}
                   </span>
                 </div>
                 <div className="pick-row">
                   <span className="category">Ugly:</span>
                   <span className="team">
-                    <span className="team-icon">{getTeamIcon(entry.ugly_team_1)}</span>{entry.ugly_team_1}, 
-                    <span className="team-icon">{getTeamIcon(entry.ugly_team_2)}</span>{entry.ugly_team_2}, 
-                    <span className="team-icon">{getTeamIcon(entry.ugly_team_3)}</span>{entry.ugly_team_3}
+                    {entry.ugly_team_1 === 'Hidden' ? (
+                      <>🔒 Hidden, 🔒 Hidden, 🔒 Hidden</>
+                    ) : (
+                      <>
+                        <span className="team-icon">{getTeamIcon(entry.ugly_team_1)}</span>{entry.ugly_team_1}, 
+                        <span className="team-icon">{getTeamIcon(entry.ugly_team_2)}</span>{entry.ugly_team_2}, 
+                        <span className="team-icon">{getTeamIcon(entry.ugly_team_3)}</span>{entry.ugly_team_3}
+                      </>
+                    )}
                   </span>
                 </div>
               </div>

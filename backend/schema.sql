@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS seasons (
     season_started BOOLEAN DEFAULT FALSE,
     playoffs_started BOOLEAN DEFAULT FALSE,
     super_bowl_complete BOOLEAN DEFAULT FALSE,
-    picks_locked BOOLEAN DEFAULT FALSE
+    picks_locked BOOLEAN DEFAULT FALSE,
+    picks_revealed BOOLEAN DEFAULT FALSE,
+    first_game_date DATETIME
 );
 
 -- User picks table

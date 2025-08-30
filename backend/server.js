@@ -174,7 +174,13 @@ app.get('/api/leaderboard', async (req, res) => {
     try {
         const season = await db.getCurrentSeason();
         const leaderboard = await db.getLeaderboard(season.id);
-        res.json(leaderboard);
+        const picksRevealed = await db.arePicksRevealed(season.id);
+        
+        res.json({
+            leaderboard,
+            picksRevealed,
+            message: picksRevealed ? null : 'Team picks will be revealed after the first NFL game starts!'
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -196,6 +202,34 @@ app.post('/api/admin/lock-picks', async (req, res) => {
         const season = await db.getCurrentSeason();
         await db.run('UPDATE seasons SET picks_locked = TRUE WHERE id = ?', [season.id]);
         res.json({ success: true, message: 'Picks locked successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Reveal picks (admin function)
+app.post('/api/admin/reveal-picks', async (req, res) => {
+    try {
+        const season = await db.getCurrentSeason();
+        await db.revealPicks(season.id);
+        res.json({ success: true, message: 'Picks revealed successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Check if picks are revealed (for frontend)
+app.get('/api/picks-status', async (req, res) => {
+    try {
+        const season = await db.getCurrentSeason();
+        const picksRevealed = await db.arePicksRevealed(season.id);
+        const firstGameDate = season.first_game_date;
+        
+        res.json({
+            picksRevealed,
+            firstGameDate,
+            message: picksRevealed ? 'Picks are revealed!' : 'Picks will be revealed after the first NFL game starts'
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

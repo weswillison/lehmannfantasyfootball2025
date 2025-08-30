@@ -62,6 +62,18 @@ export interface LeaderboardEntry {
   ugly_team_3: string;
 }
 
+export interface LeaderboardResponse {
+  leaderboard: LeaderboardEntry[];
+  picksRevealed: boolean;
+  message?: string;
+}
+
+export interface PicksStatus {
+  picksRevealed: boolean;
+  firstGameDate: string;
+  message: string;
+}
+
 export interface ScoringRules {
   rules: string[];
 }
@@ -116,8 +128,13 @@ class FantasyFootballAPI {
     }
   }
 
-  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+  async getLeaderboard(): Promise<LeaderboardResponse> {
     const response = await this.api.get('/leaderboard');
+    return response.data;
+  }
+
+  async getPicksStatus(): Promise<PicksStatus> {
+    const response = await this.api.get('/picks-status');
     return response.data;
   }
 
