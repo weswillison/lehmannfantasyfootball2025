@@ -218,6 +218,17 @@ app.post('/api/admin/reveal-picks', async (req, res) => {
     }
 });
 
+// Hide picks (admin function - for testing)
+app.post('/api/admin/hide-picks', async (req, res) => {
+    try {
+        const season = await db.getCurrentSeason();
+        await db.run('UPDATE seasons SET picks_revealed = FALSE WHERE id = ?', [season.id]);
+        res.json({ success: true, message: 'Picks hidden successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Check if picks are revealed (for frontend)
 app.get('/api/picks-status', async (req, res) => {
     try {
