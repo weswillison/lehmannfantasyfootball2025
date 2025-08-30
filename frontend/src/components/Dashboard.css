@@ -1,0 +1,178 @@
+.dashboard {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.dashboard-header h2 {
+  color: #1e3c72;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+}
+
+.tab-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.tab {
+  flex: 1;
+  max-width: 200px;
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s;
+  color: #666;
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  box-shadow: 0 2px 8px rgba(30, 60, 114, 0.2);
+}
+
+.picks-tab {
+  text-align: center;
+}
+
+.picks-summary h3 {
+  color: #1e3c72;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+}
+
+.pick-category {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #1e3c72;
+}
+
+.pick-category h4 {
+  color: #1e3c72;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.team-pick {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.team-pick .team-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.team-pick .team-text {
+  flex: 1;
+}
+
+.team-pick:last-child {
+  margin-bottom: 0;
+}
+
+.ugly-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-picks-button {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.edit-picks-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.picks-locked-message {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #fff3e0;
+  border: 2px solid #ffb74d;
+  border-radius: 8px;
+  color: #e65100;
+  font-weight: 600;
+}
+
+.no-picks {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.no-picks h2 {
+  color: #1e3c72;
+  margin-bottom: 1rem;
+}
+
+.action-button {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .ugly-teams {
+    flex-direction: column;
+  }
+}

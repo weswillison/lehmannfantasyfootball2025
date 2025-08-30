@@ -1,0 +1,101 @@
+.user-registration {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.user-registration h2 {
+  color: #1e3c72;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.intro {
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.registration-form {
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1e3c72;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rules-preview {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-left: 4px solid #1e3c72;
+}
+
+.rules-preview h3 {
+  color: #1e3c72;
+  margin-bottom: 1rem;
+}
+
+.rules-preview ul {
+  list-style: none;
+  padding: 0;
+}
+
+.rules-preview li {
+  padding: 0.25rem 0;
+  color: #666;
+}
+
+.rules-preview li::before {
+  content: '✓ ';
+  color: #4caf50;
+  font-weight: bold;
+}
