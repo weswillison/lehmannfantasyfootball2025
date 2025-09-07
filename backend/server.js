@@ -262,6 +262,21 @@ app.get('/api/rules', async (req, res) => {
     });
 });
 
+// Admin endpoint to add missing database column
+app.post('/api/admin/add-column', async (req, res) => {
+    try {
+        // Try to add the score_processed column if it doesn't exist
+        await db.run('ALTER TABLE games ADD COLUMN score_processed BOOLEAN DEFAULT FALSE');
+        res.json({ success: true, message: 'Column added successfully' });
+    } catch (error) {
+        if (error.message.includes('duplicate column name')) {
+            res.json({ success: true, message: 'Column already exists' });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
+    }
+});
+
 // Admin endpoint to update games manually
 app.post('/api/admin/update-games', async (req, res) => {
     try {
