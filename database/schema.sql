@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS games (
     home_score INTEGER,
     away_score INTEGER,
     completed BOOLEAN DEFAULT FALSE,
+    score_processed BOOLEAN DEFAULT FALSE,
     game_date DATETIME,
     espn_game_id TEXT,
     FOREIGN KEY (season_id) REFERENCES seasons(id),

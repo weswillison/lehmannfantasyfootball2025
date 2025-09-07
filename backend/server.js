@@ -262,6 +262,62 @@ app.get('/api/rules', async (req, res) => {
     });
 });
 
+// Admin endpoint to update games manually
+app.post('/api/admin/update-games', async (req, res) => {
+    try {
+        await gameUpdater.updateGames();
+        res.json({ success: true, message: 'Games updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Admin endpoint to fix corrupted scores by resetting and recalculating
+app.post('/api/admin/fix-scores', async (req, res) => {
+    try {
+        const season = await db.getCurrentSeason();
+        
+        // Reset all team standings to actual game results
+        await db.run('DELETE FROM team_standings WHERE season_id = ?', [season.id]);
+        
+        // Reset all games to unprocessed
+        await db.run('UPDATE games SET score_processed = FALSE WHERE season_id = ?', [season.id]);
+        
+        // Recalculate standings from scratch
+        const completedGames = await db.all(`
+            SELECT * FROM games 
+            WHERE season_id = ? AND completed = TRUE 
+            AND home_score IS NOT NULL AND away_score IS NOT NULL
+            ORDER BY game_date ASC
+        `, [season.id]);
+        
+        // Process each game exactly once
+        for (const game of completedGames) {
+            if (!game.score_processed) {
+                await gameUpdater.updateTeamRecord(
+                    game.home_team_id, 
+                    game.away_team_id, 
+                    game.home_score, 
+                    game.away_score, 
+                    season.id, 
+                    game.espn_game_id
+                );
+            }
+        }
+        
+        // Recalculate all user scores
+        await gameUpdater.recalculateAllScores(season.id);
+        
+        res.json({ 
+            success: true, 
+            message: `Scores fixed! Processed ${completedGames.length} games`,
+            gamesProcessed: completedGames.length
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'healthy', timestamp: new Date().toISOString() });

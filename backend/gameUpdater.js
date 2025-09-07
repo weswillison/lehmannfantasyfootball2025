@@ -72,22 +72,28 @@ class GameUpdater {
                     espnGame.completed, espnGame.date.toISOString(),
                     espnGame.espnGameId
                 ]);
+
+                // Only process score if game is newly completed and not yet processed
+                if (espnGame.completed && espnGame.homeScore !== null && espnGame.awayScore !== null 
+                    && !existingGame.score_processed) {
+                    await this.updateTeamRecord(homeTeam.id, awayTeam.id, espnGame.homeScore, espnGame.awayScore, season.id, espnGame.espnGameId);
+                }
             } else {
                 // Insert new game
                 await this.db.run(`
                     INSERT INTO games 
-                    (season_id, week, home_team_id, away_team_id, home_score, away_score, completed, game_date, espn_game_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (season_id, week, home_team_id, away_team_id, home_score, away_score, completed, score_processed, game_date, espn_game_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `, [
                     season.id, espnGame.week, homeTeam.id, awayTeam.id,
-                    espnGame.homeScore, espnGame.awayScore, espnGame.completed,
+                    espnGame.homeScore, espnGame.awayScore, espnGame.completed, false,
                     espnGame.date.toISOString(), espnGame.espnGameId
                 ]);
-            }
 
-            // Update team standings if game is completed
-            if (espnGame.completed && espnGame.homeScore !== null && espnGame.awayScore !== null) {
-                await this.updateTeamRecord(homeTeam.id, awayTeam.id, espnGame.homeScore, espnGame.awayScore, season.id);
+                // Process score if game is completed
+                if (espnGame.completed && espnGame.homeScore !== null && espnGame.awayScore !== null) {
+                    await this.updateTeamRecord(homeTeam.id, awayTeam.id, espnGame.homeScore, espnGame.awayScore, season.id, espnGame.espnGameId);
+                }
             }
 
         } catch (error) {
@@ -95,7 +101,7 @@ class GameUpdater {
         }
     }
 
-    async updateTeamRecord(homeTeamId, awayTeamId, homeScore, awayScore, seasonId) {
+    async updateTeamRecord(homeTeamId, awayTeamId, homeScore, awayScore, seasonId, espnGameId) {
         const winner = homeScore > awayScore ? homeTeamId : awayTeamId;
         const loser = homeScore > awayScore ? awayTeamId : homeTeamId;
 
@@ -116,6 +122,11 @@ class GameUpdater {
         await this.db.run(`
             UPDATE team_standings SET losses = losses + 1 WHERE team_id = ? AND season_id = ?
         `, [loser, seasonId]);
+
+        // Mark game as score processed to prevent double-counting
+        await this.db.run(`
+            UPDATE games SET score_processed = TRUE WHERE espn_game_id = ?
+        `, [espnGameId]);
     }
 
     async updateStandings(season) {
